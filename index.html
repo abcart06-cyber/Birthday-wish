@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday</title>
+    <meta name="description" content="A special birthday wish for someone amazing." />
+
+    <!-- Google Fonts — Plus Jakarta Sans (closest to Figma Sans) + Great Vibes for script -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        script: ['Great Vibes', 'cursive'],
+                    },
+                    colors: {
+                        cream: {
+                            50: '#FEFDFB',
+                            100: '#FBF8F3',
+                            200: '#F5F0E6',
+                            300: '#EDE5D4',
+                        },
+                        teal: {
+                            400: '#5BADA6',
+                            500: '#4A9B94',
+                            600: '#3D8780',
+                        },
+                        amber: {
+                            400: '#F2C94C',
+                            500: '#E5B83A',
+                        },
+                        coral: {
+                            400: '#E8894A',
+                            500: '#D97A3E',
+                        },
+                        plum: {
+                            400: '#9B7DBF',
+                            500: '#8B6BAE',
+                        },
+                        charcoal: {
+                            700: '#3D3D3D',
+                            800: '#2A2A2A',
+                            900: '#1A1A1A',
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Image Configuration -->
+    <script src="./config.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* ── Base Reset ── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+
+        body {
+            background: #FEFDFB;
+            color: #3D3D3D;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* ── Lenis overrides ── */
+        html.lenis,
+        html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        /* ── Hero ── */
+        .hero-bg {
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(91, 173, 166, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(242, 201, 76, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(155, 125, 191, 0.05) 0%, transparent 50%),
+                #FEFDFB;
+        }
+
+        /* ── Floating Dots ── */
+        .dot {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Book-style Greeting Card ── */
+        /* ── Book-style Greeting Card ── */
+        .book-card {
+            position: relative;
+            perspective: 2400px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            width: 340px;
+            height: 460px;
+        }
+
+        .book-card__sheet {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform-origin: left center;
+        }
+
+        /* Z-indices based on stacking order */
+        .book-card__sheet--cover {
+            z-index: 30;
+            cursor: pointer;
+        }
+
+        .book-card__sheet--middle {
+            z-index: 20;
+            cursor: pointer;
+        }
+
+        .book-card__sheet--base {
+            z-index: 10;
+        }
+
+        /* Flipped state z-index (on the left side) */
+        .book-card__sheet--cover.is-flipped {
+            z-index: 11;
+        }
+
+        .book-card__sheet--middle.is-flipped {
+            z-index: 21;
+        }
+
+        .book-card__page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .book-card__page--full {
+            padding: 0 !important;
+        }
+
+        .book-card__page--front {
+            background: #fff;
+            border: 1px solid #E8E2D6;
+            z-index: 2;
+        }
+
+        .book-card__page--back {
+            transform: rotateY(180deg);
+            background: linear-gradient(170deg, #FEFDFB 0%, #FBF8F3 50%, #F8F3EA 100%);
+            border: 1px solid #E8E2D6;
+            z-index: 1;
+        }
+
+        /* Front Cover styling */
+        .book-card__cover-front {
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 28px;
+        }
+
+        .book-card__cover-front::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border: 1px solid rgba(91, 173, 166, 0.08);
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        /* Page 3 Inside Right: image container */
+        .book-card__image-container {
+            width: 100%;
+            height: 60%;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: #F5F0E6;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #EDE5D4;
+        }
+
+        .book-card__image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-card__caption {
+            height: 35%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 12px;
+        }
+
+        /* Corner floral elements styling */
+        .floral-corner {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            opacity: 0.15;
+            pointer-events: none;
+            color: #4A9B94;
+        }
+
+        .floral-corner--top-left {
+            top: 18px;
+            left: 18px;
+        }
+
+        .floral-corner--bottom-right {
+            bottom: 18px;
+            right: 18px;
+            transform: rotate(180deg);
+        }
+
+        .floral-corner--top-right {
+            top: 18px;
+            right: 18px;
+            transform: rotate(90deg);
+        }
+
+        .floral-corner--bottom-left {
+            bottom: 18px;
+            left: 18px;
+            transform: rotate(-90deg);
+        }
+
+        /* Mobile Responsive Booklet Scaling (Vertical Flip) */
+        @media (max-width: 640px) {
+            .book-card {
+                width: 310px !important;
+                height: 410px !important;
+            }
+
+            .book-card__sheet {
+                transform-origin: top center !important;
+            }
+
+            .book-card__page--back {
+                transform: rotateX(180deg) !important;
+            }
+
+            .book-card__spine-line {
+                width: 100% !important;
+                height: 1px !important;
+                top: 0 !important;
+                left: 0 !important;
+            }
+
+            .book-card__spine-line::before {
+                width: 100% !important;
+                height: 10px !important;
+                top: 0 !important;
+                left: 0 !important;
+                background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), transparent) !important;
+            }
+
+            /* Mobile spacing adjustments inside card */
+            .book-card__page {
+                padding: 24px 16px !important;
+            }
+
+            .book-card__page.book-card__page--full {
+                padding: 0 !important;
+            }
+
+            .book-card__cover-front {
+                padding: 24px 16px !important;
+            }
+
+            .floral-corner {
+                width: 35px !important;
+                height: 35px !important;
+                top: 10px !important;
+                left: 10px !important;
+            }
+
+            .floral-corner--bottom-right {
+                bottom: 10px !important;
+                right: 10px !important;
+                top: auto !important;
+                left: auto !important;
+            }
+
+            .floral-corner--top-right {
+                top: 10px !important;
+                right: 10px !important;
+                left: auto !important;
+            }
+
+            .floral-corner--bottom-left {
+                bottom: 10px !important;
+                left: 10px !important;
+                top: auto !important;
+                right: auto !important;
+            }
+        }
+
+        /* Spine detail */
+        .book-card__spine-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 100%;
+            background: #E0D9CC;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .book-card__spine-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.03), transparent);
+        }
+
+        /* ── Decorative line ── */
+        .accent-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #5BADA6, #F2C94C, #E8894A, #9B7DBF, transparent);
+            opacity: 0.5;
+        }
+
+        .accent-line-glow {
+            animation: line-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes line-glow {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* ── Sparkle ── */
+        @keyframes float-sparkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.2);
+            }
+        }
+
+        .sparkle-dot {
+            animation: float-sparkle 3s ease-in-out infinite;
+        }
+
+        /* ── Confetti ── */
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            top: -20px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* ── Scroll indicator ── */
+        @keyframes bounce-gentle {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(-50%);
+            }
+
+            50% {
+                transform: translateY(6px) translateX(-50%);
+            }
+        }
+
+        .scroll-indicator {
+            animation: bounce-gentle 2.5s ease-in-out infinite;
+        }
+
+        /* ── Photo frame hover ── */
+        .photo-frame {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s ease;
+        }
+
+        .photo-frame:hover {
+            transform: scale(1.02) rotate(-0.5deg);
+            box-shadow: 0 20px 50px rgba(91, 173, 166, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        /* ── Section divider ── */
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(91, 173, 166, 0.25), rgba(242, 201, 76, 0.25), transparent);
+        }
+
+        /* ── Wish card hover glow ── */
+        .wish-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .wish-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(91, 173, 166, 0.1), 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ── Infinite Gallery ── */
+        .gallery-wrapper {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .gallery-row {
+            display: flex;
+            gap: 16px;
+            width: max-content;
+            will-change: transform;
+        }
+
+        .gallery-item {
+            flex-shrink: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: #F5F0E6;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.04) rotate(-1deg);
+            box-shadow: 0 20px 50px rgba(91, 173, 166, 0.15), 0 8px 20px rgba(0, 0, 0, 0.06);
+            z-index: 2;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Placeholder state — shows before images are added */
+        .gallery-item--placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(91, 173, 166, 0.2);
+            background: linear-gradient(135deg, #FBF8F3 0%, #F5F0E6 100%);
+        }
+
+        .gallery-item--placeholder svg {
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item--placeholder:hover svg {
+            opacity: 0.4;
+        }
+
+        /* Row 1: taller images */
+        .gallery-row--top .gallery-item {
+            width: 280px;
+            height: 340px;
+        }
+
+        .gallery-row--top .gallery-item:nth-child(even) {
+            width: 220px;
+            height: 290px;
+            margin-top: 50px;
+        }
+
+        /* Row 2: wider images, stagger even items down */
+        .gallery-row--bottom .gallery-item {
+            width: 300px;
+            height: 320px;
+        }
+
+        .gallery-row--bottom .gallery-item:nth-child(even) {
+            width: 240px;
+            height: 280px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 640px) {
+            .gallery-row--top .gallery-item {
+                width: 200px;
+                height: 250px;
+            }
+
+            .gallery-row--top .gallery-item:nth-child(even) {
+                width: 160px;
+                height: 210px;
+                margin-top: 40px;
+            }
+
+            .gallery-row--bottom .gallery-item {
+                width: 220px;
+                height: 240px;
+            }
+
+            .gallery-row--bottom .gallery-item:nth-child(even) {
+                width: 180px;
+                height: 200px;
+                margin-top: 30px;
+            }
+        }
+
+        /* ── Custom scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #FBF8F3;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #5BADA640;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5BADA680;
+        }
+
+        /* ── Botanical Illustration Swaying & Flickering Animations ── */
+        @keyframes botanical-sway {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+                transform-origin: 100px 170px;
+            }
+
+            50% {
+                transform: rotate(2deg);
+                transform-origin: 100px 170px;
+            }
+        }
+
+        @keyframes heart-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                transform-origin: 100px 55px;
+            }
+
+            50% {
+                transform: scale(1.1);
+                transform-origin: 100px 55px;
+            }
+        }
+
+        @keyframes sparkle-flicker {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.85);
+                transform-origin: 57px 45px;
+            }
+
+            50% {
+                opacity: 0.9;
+                transform: scale(1.15);
+                transform-origin: 57px 45px;
+            }
+        }
+
+        @keyframes sparkle-flicker-right {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.85);
+                transform-origin: 142px 65px;
+            }
+
+            50% {
+                opacity: 0.9;
+                transform: scale(1.15);
+                transform-origin: 142px 65px;
+            }
+        }
+
+        .animate-botanical-sway {
+            animation: botanical-sway 6s ease-in-out infinite;
+        }
+
+        .animate-heart-pulse {
+            animation: heart-pulse 2.2s ease-in-out infinite;
+        }
+
+        .animate-sparkle-flicker-left {
+            animation: sparkle-flicker 3s ease-in-out infinite;
+        }
+
+        .animate-sparkle-flicker-right {
+            animation: sparkle-flicker-right 3.5s ease-in-out infinite;
+        }
+
+        /* ── Reduced motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            .card-inner {
+                transition-duration: 0s;
+            }
+
+            .sparkle-dot {
+                animation: none;
+            }
+
+            .scroll-indicator {
+                animation: none;
+            }
+
+            .dot {
+                display: none;
+            }
+
+            .confetti-piece {
+                display: none;
+            }
+
+            .accent-line-glow {
+                animation: none;
+            }
+
+            .gallery-row {
+                animation: none !important;
+            }
+
+            .book-card__cover {
+                transition: none !important;
+            }
+
+            .animate-botanical-sway,
+            .animate-heart-pulse,
+            .animate-sparkle-flicker-left,
+            .animate-sparkle-flicker-right {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- FLOATING DOTS (decorative)                  -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="dots" class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true"></div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- HERO SECTION                                -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="hero"
+        class="hero-bg relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
+        <!-- Decorative scattered dots -->
+        <div class="absolute top-16 left-[12%] w-2.5 h-2.5 bg-teal-400 rounded-full sparkle-dot"
+            style="animation-delay: 0s;" aria-hidden="true"></div>
+        <div class="absolute top-28 right-[18%] w-2 h-2 bg-amber-400 rounded-full sparkle-dot"
+            style="animation-delay: 0.5s;" aria-hidden="true"></div>
+        <div class="absolute top-48 left-[30%] w-1.5 h-1.5 bg-coral-400 rounded-full sparkle-dot"
+            style="animation-delay: 1s;" aria-hidden="true"></div>
+        <div class="absolute bottom-36 right-[12%] w-2 h-2 bg-plum-400 rounded-full sparkle-dot"
+            style="animation-delay: 0.3s;" aria-hidden="true"></div>
+        <div class="absolute bottom-52 left-[20%] w-3 h-3 bg-amber-400 rounded-full sparkle-dot"
+            style="animation-delay: 1.4s;" aria-hidden="true"></div>
+        <div class="absolute top-36 right-[35%] w-1.5 h-1.5 bg-teal-500 rounded-full sparkle-dot"
+            style="animation-delay: 0.8s;" aria-hidden="true"></div>
+        <div class="absolute bottom-24 right-[40%] w-2 h-2 bg-coral-400 rounded-full sparkle-dot"
+            style="animation-delay: 1.7s;" aria-hidden="true"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 text-center max-w-3xl px-4">
+            <p id="hero-subtitle"
+                class="font-sans text-xs font-500 tracking-[0.4em] uppercase text-teal-500 mb-6 opacity-0">
+                🌸 Wish you a
+            </p>
+            <h1 id="hero-title"
+                class="font-sans text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-800 leading-[0.9] mb-8">
+                <span class="block text-charcoal-800">Happy Birthday,</span>
+                <span class="block text-teal-500 mt-2">Sona! 🎉</span>
+            </h1>
+            <div class="accent-line accent-line-glow w-40 mx-auto mb-8 rounded-full"></div>
+            <div id="hero-name"
+                class="max-w-xl mx-auto font-sans text-base sm:text-lg text-charcoal-700/70 leading-relaxed opacity-0 space-y-3">
+                <p>I wanted to wish you in a differently</p>
+                <p>So I made this little website for you.</p>
+                <p>I hope it brings a smile to your face. 😊</p>
+                <p class="font-sans text-[10px] font-600 tracking-[0.3em] uppercase text-teal-500 pt-4 block">Let's
+                    begin.</p>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator absolute bottom-8 left-1/2 flex flex-col items-center gap-2 opacity-50">
+            <span class="font-sans text-[10px] font-500 tracking-[0.3em] uppercase text-charcoal-700/50">Scroll</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                class="text-teal-400">
+                <path d="M7 13l5 5 5-5M7 7l5 5 5-5" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: INFINITE SCROLL GALLERY            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="gallery-section" class="relative py-24 bg-cream-50 overflow-hidden">
+        <div class="section-divider w-full max-w-lg mx-auto mb-16 rounded-full"></div>
+        <div class="max-w-xl mx-auto text-center px-6 mb-14 font-serif text-lg sm:text-xl text-charcoal-700/80 italic leading-relaxed space-y-3"
+            data-animate="fade-up">
+            <p>I hope you achive all your dreams and goals.</p>
+            <p class="font-sans text-sm font-semibold text-plum-500 not-italic tracking-wider uppercase pt-3">Believe in
+                yourself.</p>
+        </div>
+
+        <!-- Gallery Row 1 (scrolls LEFT) — 5 images -->
+        <div class="gallery-wrapper mb-5" id="gallery-top-wrapper">
+            <div class="gallery-row gallery-row--top" id="gallery-row-top">
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <img src="./friends.png" alt="Memory 1" />
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5BADA6" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2C94C" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E8894A" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9B7DBF" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Row 2 (scrolls RIGHT) — 5 images -->
+        <div class="gallery-wrapper" id="gallery-bottom-wrapper">
+            <div class="gallery-row gallery-row--bottom" id="gallery-row-bottom">
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9B7DBF" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5BADA6" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <img src="./friends.png" alt="Memory 2" />
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E8894A" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+                <div class="gallery-item gallery-item--placeholder" data-gallery>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F2C94C" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: BOOK-STYLE GREETING CARD           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="card-section"
+        class="relative py-32 px-6 flex flex-col items-center justify-center min-h-screen bg-cream-100">
+        <div class="section-divider w-full max-w-lg mx-auto mb-20 rounded-full"></div>
+
+        <p class="font-sans text-xs font-500 tracking-[0.35em] uppercase text-teal-500 mb-12 text-center"
+            data-animate="fade-up">
+            Open Your Card
+        </p>
+
+        <!-- Book-style Greeting Card -->
+        <div class="book-card" id="birthday-card" data-animate="scale-up">
+
+            <!-- BASE PANEL (always in place, holds Page 3 on front and Page 4 on back) -->
+            <!-- Sheet 3 (Base Sheet - sits at the bottom) -->
+            <div class="book-card__sheet book-card__sheet--base" id="card-base">
+                <!-- Page 5: any illustrations -->
+                <div
+                    class="book-card__page book-card__page--front flex flex-col items-center justify-center p-8 bg-[#FBF8F3]">
+                    <!-- Floral top left -->
+                    <svg viewBox="0 0 100 100" class="floral-corner floral-corner--top-left fill-none stroke-current"
+                        stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                        <path d="M45,43 Q55,28 50,23 Q45,18 35,28 Q40,38 45,43 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+
+                    <div class="text-center relative z-10 max-w-[240px]">
+                        <!-- Botanical Illustration -->
+                        <svg viewBox="0 0 200 200" class="w-36 h-36 mx-auto mb-4 text-teal-600/70" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <g class="animate-botanical-sway">
+                                <path d="M100,170 C100,135 90,95 90,70" />
+                                <path d="M100,170 C105,140 120,115 120,95" />
+                                <path d="M100,170 C95,140 75,120 75,100" />
+
+                                <path d="M90,130 C80,125 70,130 73,138 C77,145 87,140 93,133 Z" fill="currentColor"
+                                    fill-opacity="0.1" />
+                                <path d="M106,125 C116,120 123,125 121,132 C118,138 109,136 104,128 Z"
+                                    fill="currentColor" fill-opacity="0.1" />
+
+                                <path d="M90,70 C90,52 80,47 90,32 C100,47 90,52 90,70 Z" fill="#E8894A"
+                                    fill-opacity="0.25" />
+                                <path d="M90,70 C102,57 108,50 103,37 C93,47 93,57 90,70 Z" fill="#F2C94C"
+                                    fill-opacity="0.25" />
+                                <path d="M90,70 C78,57 72,50 77,37 C87,47 87,57 90,70 Z" fill="#9B7DBF"
+                                    fill-opacity="0.25" />
+
+                                <circle cx="90" cy="70" r="4.5" fill="currentColor" />
+                                <circle cx="120" cy="95" r="3.5" fill="currentColor" />
+                                <circle cx="75" cy="100" r="3.5" fill="currentColor" />
+
+                                <path d="M120,95 C120,85 115,80 120,72 C125,80 120,85 120,95 Z" fill="#5BADA6"
+                                    fill-opacity="0.25" />
+                                <path d="M75,100 C75,90 70,85 75,77 C80,85 75,90 75,100 Z" fill="#5BADA6"
+                                    fill-opacity="0.25" />
+                            </g>
+
+                            <!-- Delicate Sparkles & Heart -->
+                            <path d="M55,45 Q55,42 57,42 Q59,42 59,45 Q59,48 57,48 Q55,48 55,45 Z"
+                                class="animate-sparkle-flicker-left" fill="#F2C94C" opacity="0.8" />
+                            <path d="M140,65 Q140,62 142,62 Q144,62 144,65 Q144,68 142,68 Q140,68 140,65 Z"
+                                class="animate-sparkle-flicker-right" fill="#F2C94C" opacity="0.8" />
+                            <path
+                                d="M100,50 C98,47 94,47 92,49 C90,51 90,55 94,59 L100,64 L106,59 C110,55 110,51 108,49 C106,47 102,47 100,50 Z"
+                                class="animate-heart-pulse" fill="#E8894A" opacity="0.8" />
+                        </svg>
+                        <p class="font-sans text-[10px] font-600 tracking-[0.25em] text-teal-600/60 uppercase">Growing
+                            &amp; Blooming</p>
+                        <p class="font-script text-xl text-teal-600/80 mt-1">with Care ❤️</p>
+                    </div>
+
+                    <!-- Floral bottom right -->
+                    <svg viewBox="0 0 100 100"
+                        class="floral-corner floral-corner--bottom-right fill-none stroke-current" stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                        <path d="M45,43 Q55,28 50,23 Q45,18 35,28 Q40,38 45,43 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+                </div>
+
+                <!-- Page 6: Back cover of card (complete card back design) -->
+                <div
+                    class="book-card__page book-card__page--back flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#FEFDFB] to-[#F5F0E6]">
+                    <div class="text-center relative z-10">
+                        <div
+                            class="w-10 h-10 rounded-full border border-teal-500/10 flex items-center justify-center bg-teal-500/5 mx-auto mb-4">
+                            <span class="text-xs text-teal-600">🎂</span>
+                        </div>
+                        <p class="font-sans text-[10px] font-500 tracking-[0.2em] text-teal-600/40 uppercase">Happy
+                            Birthday, pa!</p>
+                        <div class="accent-line w-12 mx-auto my-3 opacity-40 rounded-full"></div>
+                        <p class="font-script text-2xl text-teal-600">— Abraham</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sheet 2 (Middle Sheet) -->
+            <div class="book-card__sheet book-card__sheet--middle" id="card-middle">
+                <!-- Page 3: Inside Right (Image )-->
+                <div class="book-card__page book-card__page--front book-card__page--full bg-[#FBF8F3]">
+                    <div class="w-full h-full relative overflow-hidden">
+                        <img id="booklet-img" src="./friends.png" alt="A special memory together"
+                            class="w-full h-full object-cover" />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-charcoal-900/40 via-transparent to-transparent z-[1]">
+                        </div>
+                        <div class="absolute bottom-4 left-4 z-[2]">
+                            <span class="font-sans text-[9px] font-500 uppercase tracking-widest text-white/80">Loved
+                                &amp; Blessed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page 4: Inside Left (Final Page - "A Small Thought") -->
+                <div class="book-card__page book-card__page--back flex flex-col items-center justify-center p-8">
+                    <!-- Floral top left -->
+                    <svg viewBox="0 0 100 100" class="floral-corner floral-corner--top-left fill-none stroke-current"
+                        stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+
+                    <div class="text-center relative z-10 w-full">
+                        <div class="max-h-[300px] overflow-y-auto px-1 space-y-3 pr-2 scrollbar-thin">
+                            <p class="font-script text-2xl text-teal-600 mb-2">Thank You</p>
+                            <p class="font-sans text-[11px] text-charcoal-700 leading-relaxed font-normal">
+                                Thank you for all the small conversations,<br>
+                                the laughs,<br>
+                                the memories,<br>
+                                and the kindness you have shown.
+                            </p>
+                            <p class="font-sans text-[11px] text-charcoal-700 font-semibold text-teal-600">
+                                I Want to Thank you for that ❤️
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-cream-300">
+                            <p class="font-sans text-[10px] text-charcoal-700/40">Take care.</p>
+                            <p class="font-script text-2xl text-teal-600 mt-1">— Abraham</p>
+                        </div>
+                    </div>
+
+                    <!-- Floral bottom right -->
+                    <svg viewBox="0 0 100 100"
+                        class="floral-corner floral-corner--bottom-right fill-none stroke-current" stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Sheet 1 (Cover Sheet - swings open from left spine) -->
+            <div class="book-card__sheet book-card__sheet--cover" id="card-cover">
+                <!-- Page 1: Cover FRONT -->
+                <div class="book-card__page book-card__page--front book-card__cover-front">
+                    <!-- Leaf decorations -->
+                    <svg viewBox="0 0 100 100" class="floral-corner floral-corner--top-left fill-none stroke-current"
+                        stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+
+                    <div class="relative z-10 text-center w-full">
+                        <!-- Balloons SVG -->
+                        <div class="mb-6">
+                            <svg width="80" height="90" viewBox="0 0 90 100" fill="none" class="mx-auto">
+                                <line x1="30" y1="55" x2="45" y2="90" stroke="#B0B0B0" stroke-width="1" opacity="0.4" />
+                                <line x1="45" y1="50" x2="45" y2="90" stroke="#B0B0B0" stroke-width="1" opacity="0.4" />
+                                <line x1="60" y1="55" x2="45" y2="90" stroke="#B0B0B0" stroke-width="1" opacity="0.4" />
+                                <ellipse cx="30" cy="35" rx="16" ry="20" fill="#5BADA6" opacity="0.85">
+                                    <animate attributeName="cy" values="35;32;35" dur="3s" repeatCount="indefinite" />
+                                </ellipse>
+                                <ellipse cx="25" cy="28" rx="4" ry="6" fill="white" opacity="0.2"
+                                    transform="rotate(-20 25 28)" />
+                                <ellipse cx="45" cy="30" rx="16" ry="20" fill="#F2C94C" opacity="0.85">
+                                    <animate attributeName="cy" values="30;27;30" dur="3.5s" repeatCount="indefinite" />
+                                </ellipse>
+                                <ellipse cx="40" cy="23" rx="4" ry="6" fill="white" opacity="0.2"
+                                    transform="rotate(-20 40 23)" />
+                                <ellipse cx="60" cy="35" rx="16" ry="20" fill="#E8894A" opacity="0.85">
+                                    <animate attributeName="cy" values="35;33;35" dur="2.8s" repeatCount="indefinite" />
+                                </ellipse>
+                                <ellipse cx="55" cy="28" rx="4" ry="6" fill="white" opacity="0.2"
+                                    transform="rotate(-20 55 28)" />
+                            </svg>
+                        </div>
+                        <p class="font-sans text-[10px] font-500 tracking-[0.35em] uppercase text-teal-600/60 mb-3">A
+                            Surprising Book</p>
+                        <h2 class="font-sans text-3xl font-800 text-charcoal-800 mb-2 leading-tight">For You,<br />pa!
+                            ❤️</h2>
+                        <p class="font-sans text-[10px] font-400 text-charcoal-700/40 tracking-wider mt-4">Tap to open
+                            booklet</p>
+                        <div
+                            class="mt-5 w-8 h-8 mx-auto rounded-full border border-teal-500/20 flex items-center justify-center bg-teal-500/5 transition-all duration-300">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" class="text-teal-600 animate-pulse">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <svg viewBox="0 0 100 100"
+                        class="floral-corner floral-corner--bottom-right fill-none stroke-current" stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+                </div>
+
+                <!-- Page 2: Inside Left ("One Simple Wish") -->
+                <div class="book-card__page book-card__page--back flex flex-col items-center justify-center p-8">
+                    <!-- Floral top left -->
+                    <svg viewBox="0 0 100 100" class="floral-corner floral-corner--top-left fill-none stroke-current"
+                        stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+
+                    <div class="text-center relative z-10 w-full">
+                        <div class="max-h-[300px] overflow-y-auto px-1 space-y-3 pr-2 scrollbar-thin">
+                            <p class="font-script text-2xl text-teal-600 mb-2">Happy Birthday 🎂</p>
+                            <p class="font-sans text-[11px] text-charcoal-700 leading-relaxed font-semibold">
+                                Happy Birthday, pa! ❤️
+                            </p>
+                            <p class="font-sans text-[11px] text-charcoal-700 leading-relaxed">
+                                I hope this year brings you lots of happiness, peace, good health and beautiful
+                                memories.
+                            </p>
+                            <p class="font-sans text-[11px] text-charcoal-700 leading-relaxed">
+                                May God bless you in everything you do.
+                            </p>
+                            <p class="font-sans text-[11px] text-charcoal-700 leading-relaxed">
+                                Enjoy your special day with your family and friends.
+                            </p>
+                            <p class="font-script text-xl text-teal-600 mt-2">
+                                Keep smiling. 😊
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Floral bottom right -->
+                    <svg viewBox="0 0 100 100"
+                        class="floral-corner floral-corner--bottom-right fill-none stroke-current" stroke-width="1.5">
+                        <path d="M10,80 Q25,50 80,20" />
+                        <path d="M25,55 Q35,40 30,35 Q25,30 15,40 Q20,50 25,55 Z" fill="currentColor"
+                            fill-opacity="0.1" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Spine line -->
+            <div class="book-card__spine-line"></div>
+        </div>
+
+        <p id="card-hint"
+            class="font-sans text-xs font-400 text-charcoal-700/30 mt-10 text-center transition-opacity duration-500">
+            Click the card to open it
+        </p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: PHOTO MEMORY                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="photo-section" class="relative py-32 px-6 flex flex-col items-center min-h-screen bg-cream-50">
+        <div class="section-divider w-full max-w-lg mx-auto mb-20 rounded-full"></div>
+
+        <p class="font-sans text-xs font-500 tracking-[0.35em] uppercase text-coral-500 mb-4 text-center"
+            data-animate="fade-up">
+            Be Kind 🌸
+        </p>
+
+        <!-- Photo Frame -->
+        <div class="photo-frame relative max-w-lg w-full mx-auto rounded-2xl overflow-hidden shadow-xl border border-cream-200"
+            data-animate="scale-up">
+            <div class="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-charcoal-900/10 to-transparent z-10">
+            </div>
+            <img id="memory-img" src="./friends.png" alt="A cherished moment" class="w-full h-auto object-cover"
+                loading="lazy" />
+            <div class="absolute bottom-0 left-0 right-0 p-8 z-20 text-center sm:text-left">
+                <p class="font-sans text-[10px] font-600 tracking-widest text-white/80 uppercase mt-4 mb-2 drop-shadow">
+                    You never know what someone is going through.</p>
+                <p class="font-script text-3xl text-amber-300 drop-shadow">Kindness never becomes old. 🌸</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: FINALE                             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="finale" class="relative py-40 px-6 flex flex-col items-center justify-center min-h-screen hero-bg">
+        <!-- Scattered dots -->
+        <div class="absolute top-24 left-[8%] w-3 h-3 bg-teal-400 rounded-full sparkle-dot"
+            style="animation-delay: 0.2s;" aria-hidden="true"></div>
+        <div class="absolute top-40 right-[14%] w-2 h-2 bg-amber-400 rounded-full sparkle-dot"
+            style="animation-delay: 0.6s;" aria-hidden="true"></div>
+        <div class="absolute bottom-32 left-[18%] w-2.5 h-2.5 bg-coral-400 rounded-full sparkle-dot"
+            style="animation-delay: 1.1s;" aria-hidden="true"></div>
+        <div class="absolute bottom-44 right-[22%] w-1.5 h-1.5 bg-plum-400 rounded-full sparkle-dot"
+            style="animation-delay: 1.5s;" aria-hidden="true"></div>
+
+        <div class="relative z-10 text-center max-w-2xl">
+            <p class="font-sans text-xs font-500 tracking-[0.35em] uppercase text-plum-500 mb-6" data-animate="fade-up">
+                A Simple Reminder
+            </p>
+            <h2 class="font-sans text-4xl sm:text-5xl font-800 text-charcoal-800 mb-8 leading-relaxed"
+                data-animate="fade-up">
+                Life won't always go the way we plan.<br />
+            </h2>
+
+            <!-- Confetti Button -->
+            <button id="confetti-btn"
+                class="group relative inline-flex items-center gap-3 px-8 py-4 bg-teal-500 rounded-full font-sans text-sm font-500 tracking-widest uppercase text-white hover:bg-teal-600 transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-teal-400/20"
+                aria-label="Launch confetti celebration">
+                <span>Celebrate Pa! 🎉</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    class="transition-transform duration-300 group-hover:translate-x-1">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- FOOTER                                      -->
+    <!-- ═══════════════════════════════════════════ -->
+    <footer class="py-12 text-center border-t border-cream-200 bg-cream-50">
+        <p class="font-sans text-[10px] font-400 text-charcoal-700/45 tracking-[0.3em] uppercase">
+            Made with ❤️ by Abraham
+        </p>
+    </footer>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SCRIPTS                                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <script>
+        // ── Lenis Smooth Scroll ──
+        const lenis = new Lenis({
+            duration: 1.4,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Sync Lenis ↔ GSAP
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        // ── Floating Dots ──
+        const dotsContainer = document.getElementById('dots');
+        const dotColors = ['#5BADA6', '#F2C94C', '#E8894A', '#9B7DBF'];
+        const dotCount = 25;
+
+        for (let i = 0; i < dotCount; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            const size = Math.random() * 4 + 2;
+            const color = dotColors[Math.floor(Math.random() * dotColors.length)];
+            dot.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        opacity: ${Math.random() * 0.15 + 0.03};
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+      `;
+            dotsContainer.appendChild(dot);
+
+            gsap.to(dot, {
+                y: `random(-60, 60)`,
+                x: `random(-30, 30)`,
+                duration: `random(7, 15)`,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+                delay: Math.random() * 5,
+            });
+        }
+
+        // ── Hero Animations ──
+        const heroTL = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        heroTL
+            .fromTo('#hero-subtitle',
+                { opacity: 0, y: 24, letterSpacing: '0.15em' },
+                { opacity: 1, y: 0, letterSpacing: '0.4em', duration: 1, delay: 0.3 }
+            )
+            .fromTo('#hero-title span:first-child',
+                { opacity: 0, y: 50, clipPath: 'inset(100% 0 0 0)' },
+                { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1.2 },
+                '-=0.5'
+            )
+            .fromTo('#hero-title span:last-child',
+                { opacity: 0, y: 50, clipPath: 'inset(100% 0 0 0)' },
+                { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1.2 },
+                '-=0.8'
+            )
+            .fromTo('#hero-name',
+                { opacity: 0, scale: 0.85 },
+                { opacity: 1, scale: 1, duration: 1 },
+                '-=0.4'
+            );
+
+        // ── Scroll-triggered Animations ──
+        document.querySelectorAll('[data-animate="fade-up"]').forEach((el) => {
+            gsap.fromTo(el,
+                { opacity: 0, y: 40 },
+                {
+                    opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: el, start: 'top 85%', end: 'top 50%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+        });
+
+        document.querySelectorAll('[data-animate="scale-up"]').forEach((el) => {
+            gsap.fromTo(el,
+                { opacity: 0, scale: 0.92 },
+                {
+                    opacity: 1, scale: 1, duration: 1.2, ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: el, start: 'top 82%', end: 'top 40%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+        });
+
+        // ── Divider animations ──
+        document.querySelectorAll('.section-divider').forEach((divider) => {
+            gsap.fromTo(divider,
+                { scaleX: 0 },
+                {
+                    scaleX: 1, duration: 1.5, ease: 'power2.inOut',
+                    scrollTrigger: {
+                        trigger: divider, start: 'top 92%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+        });
+
+        // ── Book Card Page Turn Controller ──
+        const bookCard = document.getElementById('birthday-card');
+        const sheetCover = document.getElementById('card-cover');
+        const sheetMiddle = document.getElementById('card-middle');
+        const bookHint = document.getElementById('card-hint');
+        let currentSpread = 0; // 0 = closed, 1 = pages 2/3, 2 = pages 4/5
+
+        function updateBookState(targetSpread) {
+            if (targetSpread === currentSpread) return;
+            const isMobile = window.innerWidth <= 640;
+            const tl = gsap.timeline({ defaults: { ease: 'power3.inOut', duration: 1.2 } });
+
+            if (targetSpread === 0) {
+                // Close completely
+                sheetCover.classList.remove('is-flipped');
+                sheetMiddle.classList.remove('is-flipped');
+
+                if (isMobile) {
+                    tl.to(sheetCover, { rotateX: 0 }, 0)
+                        .to(sheetMiddle, { rotateX: 0 }, 0)
+                        .to(bookCard, { y: 0, duration: 1 }, 0.2);
+                } else {
+                    tl.to(sheetCover, { rotateY: 0 }, 0)
+                        .to(sheetMiddle, { rotateY: 0 }, 0)
+                        .to(bookCard, { x: 0, duration: 1 }, 0.2);
+                }
+                bookCard.classList.remove('is-open');
+                if (bookHint) bookHint.textContent = 'Tap cover to open booklet';
+            }
+            else if (targetSpread === 1) {
+                // Spread 1: Cover open, middle closed (showing Pages 2 & 3)
+                bookCard.classList.add('is-open');
+                sheetCover.classList.add('is-flipped');
+                sheetMiddle.classList.remove('is-flipped');
+
+                const shiftX = bookCard.offsetWidth / 2;
+                const shiftY = bookCard.offsetHeight / 2;
+
+                if (isMobile) {
+                    tl.to(bookCard, { y: shiftY }, 0)
+                        .to(sheetCover, { rotateX: 180 }, 0)
+                        .to(sheetMiddle, { rotateX: 0 }, 0.1);
+                } else {
+                    tl.to(bookCard, { x: shiftX }, 0)
+                        .to(sheetCover, { rotateY: -180 }, 0)
+                        .to(sheetMiddle, { rotateY: 0 }, 0.1);
+                }
+                if (bookHint) bookHint.textContent = 'Tap right page to turn, tap left page to go back';
+            }
+            else if (targetSpread === 2) {
+                // Spread 2: Cover open, middle open (showing Pages 4 & 5)
+                bookCard.classList.add('is-open');
+                sheetCover.classList.add('is-flipped');
+                sheetMiddle.classList.add('is-flipped');
+
+                const shiftX = bookCard.offsetWidth / 2;
+                const shiftY = bookCard.offsetHeight / 2;
+
+                if (isMobile) {
+                    tl.to(bookCard, { y: shiftY }, 0)
+                        .to(sheetCover, { rotateX: 180 }, 0)
+                        .to(sheetMiddle, { rotateX: 180 }, 0);
+                } else {
+                    tl.to(bookCard, { x: shiftX }, 0)
+                        .to(sheetCover, { rotateY: -180 }, 0)
+                        .to(sheetMiddle, { rotateY: -180 }, 0);
+                }
+                if (bookHint) bookHint.textContent = 'Tap left page to go back';
+            }
+
+            currentSpread = targetSpread;
+        }
+
+        // Add page-click triggers
+        bookCard.querySelector('.book-card__sheet--cover .book-card__page--front').addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateBookState(1);
+        });
+
+        bookCard.querySelector('.book-card__sheet--cover .book-card__page--back').addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateBookState(0);
+        });
+
+        bookCard.querySelector('.book-card__sheet--middle .book-card__page--front').addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateBookState(2);
+        });
+
+        bookCard.querySelector('.book-card__sheet--middle .book-card__page--back').addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateBookState(1);
+        });
+
+        bookCard.querySelector('.book-card__sheet--base .book-card__page--front').addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateBookState(1);
+        });
+
+        // ── Confetti ──
+        const confettiBtn = document.getElementById('confetti-btn');
+        const confettiColors = ['#5BADA6', '#F2C94C', '#E8894A', '#9B7DBF', '#4A9B94', '#E5B83A'];
+
+        function createConfetti() {
+            for (let i = 0; i < 55; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('confetti-piece');
+                const size = Math.random() * 8 + 4;
+                const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                const isCircle = Math.random() > 0.5;
+
+                piece.style.cssText = `
+          width: ${size}px;
+          height: ${isCircle ? size : size * 2.5}px;
+          background: ${color};
+          left: ${Math.random() * 100}%;
+          border-radius: ${isCircle ? '50%' : '2px'};
+          animation: confetti-fall ${Math.random() * 2 + 2}s linear forwards;
+          animation-delay: ${Math.random() * 0.5}s;
+        `;
+                document.body.appendChild(piece);
+                setTimeout(() => piece.remove(), 4000);
+            }
+        }
+
+        confettiBtn.addEventListener('click', createConfetti);
+
+        // ── Parallax on sparkle dots ──
+        gsap.to('#hero .sparkle-dot', {
+            yPercent: -40,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1,
+            },
+        });
+
+        // ── Finale accent line ──
+        gsap.fromTo('#finale .accent-line',
+            { scaleX: 0 },
+            {
+                scaleX: 1, duration: 1.5, ease: 'power2.inOut',
+                scrollTrigger: {
+                    trigger: '#finale', start: 'top 70%',
+                    toggleActions: 'play none none reverse',
+                },
+            }
+        );
+
+        // ── Infinite Gallery Marquee ──
+        function initGalleryMarquee(rowEl, speed, direction) {
+            // direction: 'left' or 'right'
+            const items = Array.from(rowEl.children);
+            const gap = 16;
+
+            // Clone items twice for seamless wrapping
+            for (let copy = 0; copy < 2; copy++) {
+                items.forEach(item => {
+                    const clone = item.cloneNode(true);
+                    rowEl.appendChild(clone);
+                });
+            }
+
+            // Measure width of one original set
+            let setWidth = 0;
+            items.forEach(item => {
+                setWidth += item.offsetWidth + gap;
+            });
+
+            if (direction === 'left') {
+                // Start at 0, scroll to -setWidth, then reset
+                gsap.set(rowEl, { x: 0 });
+                const tween = gsap.to(rowEl, {
+                    x: -setWidth,
+                    duration: speed,
+                    ease: 'none',
+                    repeat: -1,
+                });
+                // Pause/resume on hover
+                rowEl.addEventListener('mouseenter', () => gsap.to(tween, { timeScale: 0, duration: 0.4 }));
+                rowEl.addEventListener('mouseleave', () => gsap.to(tween, { timeScale: 1, duration: 0.4 }));
+            } else {
+                // Start at -setWidth, scroll to 0, then reset
+                gsap.set(rowEl, { x: -setWidth });
+                const tween = gsap.to(rowEl, {
+                    x: 0,
+                    duration: speed,
+                    ease: 'none',
+                    repeat: -1,
+                });
+                // Pause/resume on hover
+                rowEl.addEventListener('mouseenter', () => gsap.to(tween, { timeScale: 0, duration: 0.4 }));
+                rowEl.addEventListener('mouseleave', () => gsap.to(tween, { timeScale: 1, duration: 0.4 }));
+            }
+        }
+
+        function populateGalleryRow(rowEl, images, colorAccents) {
+            rowEl.innerHTML = '';
+            images.forEach((src, index) => {
+                const item = document.createElement('div');
+                item.setAttribute('data-gallery', '');
+
+                if (src && src.trim() !== '' && src !== 'placeholder') {
+                    item.className = 'gallery-item';
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = `Memory ${index + 1}`;
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    item.appendChild(img);
+                } else {
+                    item.className = 'gallery-item gallery-item--placeholder';
+                    const accent = colorAccents[index % colorAccents.length];
+                    item.innerHTML = `
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="1">
+                            <rect x="3" y="3" width="18" height="18" rx="3" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <path d="m21 15-5-5L5 21" />
+                        </svg>
+                    `;
+                }
+                rowEl.appendChild(item);
+            });
+        }
+
+        // Init both rows
+        const rowTop = document.getElementById('gallery-row-top');
+        const rowBottom = document.getElementById('gallery-row-bottom');
+
+        if (rowTop && rowBottom) {
+            const startGallery = () => {
+                // Populate booklet & memory images from configuration if available
+                if (typeof IMAGE_CONFIG !== 'undefined') {
+                    const bookletImg = document.getElementById('booklet-img');
+                    if (bookletImg && IMAGE_CONFIG.cardPage3Image) {
+                        bookletImg.src = IMAGE_CONFIG.cardPage3Image;
+                    }
+                    const memoryImg = document.getElementById('memory-img');
+                    if (memoryImg && IMAGE_CONFIG.photoMemoryImage) {
+                        memoryImg.src = IMAGE_CONFIG.photoMemoryImage;
+                    }
+
+                    const accents = ['#5BADA6', '#F2C94C', '#E8894A', '#9B7DBF'];
+                    if (IMAGE_CONFIG.galleryTop) {
+                        populateGalleryRow(rowTop, IMAGE_CONFIG.galleryTop, accents);
+                    }
+                    if (IMAGE_CONFIG.galleryBottom) {
+                        populateGalleryRow(rowBottom, IMAGE_CONFIG.galleryBottom, accents);
+                    }
+                }
+
+                // Force browser layout update and run marquee initialization in the next frame
+                requestAnimationFrame(() => {
+                    initGalleryMarquee(rowTop, 35, 'left');
+                    initGalleryMarquee(rowBottom, 40, 'right');
+                });
+            };
+
+            if (document.readyState === 'complete') {
+                startGallery();
+            } else {
+                window.addEventListener('load', startGallery);
+            }
+        }
+
+        // Gallery entrance animation
+        gsap.fromTo('#gallery-section .gallery-wrapper',
+            { opacity: 0, y: 40 },
+            {
+                opacity: 1, y: 0, duration: 1, ease: 'power2.out', stagger: 0.2,
+                scrollTrigger: {
+                    trigger: '#gallery-section', start: 'top 80%',
+                    toggleActions: 'play none none reverse',
+                },
+            }
+        );
+    </script>
+</body>
+
+</html>
