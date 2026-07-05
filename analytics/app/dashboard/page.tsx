@@ -95,9 +95,11 @@ export default function Dashboard() {
   const [data, setData] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Helper to format duration
   const formatDuration = (seconds: number) => {
+    if (isNaN(seconds) || seconds === undefined || seconds === null) return '0s';
     if (seconds < 60) return `${seconds}s`;
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -129,14 +131,20 @@ export default function Dashboard() {
   const fetchStats = async (range: string, isSilent = false) => {
     if (!isSilent) setLoading(true);
     else setRefreshing(true);
+    setError(null);
 
     try {
       const { startDate, endDate } = getDateParams(range);
       const res = await fetch(`/api/stats?startDate=${startDate}&endDate=${endDate}`);
       const stats = await res.json();
-      setData(stats);
-    } catch (error) {
-      console.error('Failed fetching stats:', error);
+      if (!res.ok || stats.error) {
+        setError(stats.error || `HTTP Error ${res.status}`);
+      } else {
+        setData(stats);
+      }
+    } catch (err: any) {
+      console.error('Failed fetching stats:', err);
+      setError(err.message || 'Connection failed');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -156,6 +164,31 @@ export default function Dashboard() {
   }, [dateRange]);
 
   if (!mounted) return null;
+
+  if (error) {
+    return (
+      <div className="max-w-xl mx-auto mt-24 p-8 bg-white/70 backdrop-blur-md border border-teal-500/10 rounded-3xl shadow-sm text-center">
+        <div className="inline-flex p-3 bg-teal-500/5 text-teal-600 rounded-2xl mb-4">
+          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 className="text-lg font-bold text-charcoal-800 mb-2">Database Connection Error</h2>
+        <p className="text-xs text-charcoal-700/60 max-w-sm mx-auto mb-6">
+          The dashboard is having trouble connecting to your Supabase PostgreSQL database. Make sure you set your <code className="bg-teal-500/5 px-1.5 py-0.5 rounded font-mono text-teal-600 text-xs">DATABASE_URL</code> and <code className="bg-teal-500/5 px-1.5 py-0.5 rounded font-mono text-teal-600 text-xs">DIRECT_URL</code> environment variables correctly in the Vercel project settings.
+        </p>
+        <div className="p-4 bg-charcoal-100/50 rounded-2xl max-w-md mx-auto font-mono text-[10px] text-charcoal-800/80 break-all mb-6 text-left">
+          {error}
+        </div>
+        <button
+          onClick={() => fetchStats(dateRange)}
+          className="px-6 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm inline-flex items-center gap-2"
+        >
+          <RefreshCw className="h-3 w-3" /> Retry Connection
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
@@ -207,7 +240,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-4">
             <span className="text-2xl sm:text-3xl font-800 text-charcoal-800">
-              {loading ? '...' : data?.kpis.visitors.toLocaleString() || 0}
+              {loading ? '...' : data?.kpis?.visitors?.toLocaleString() || 0}
             </span>
           </div>
         </div>
@@ -220,7 +253,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-4">
             <span className="text-2xl sm:text-3xl font-800 text-charcoal-800">
-              {loading ? '...' : data?.kpis.pageViews.toLocaleString() || 0}
+              {loading ? '...' : data?.kpis?.pageViews?.toLocaleString() || 0}
             </span>
           </div>
         </div>
@@ -233,7 +266,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-4">
             <span className="text-2xl sm:text-3xl font-800 text-charcoal-800">
-              {loading ? '...' : formatDuration(Math.round(data?.topPages[0]?.avgDuration || 0))}
+              {loading ? '...' : formatDuration(Math.round(data?.topPages?.[0]?.avgDuration || 0))}
             </span>
           </div>
         </div>
@@ -246,7 +279,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-4">
             <span className="text-2xl sm:text-3xl font-800 text-charcoal-800 font-sans">
-              {loading ? '...' : `${data?.kpis.bounceRate || 0}%`}
+              {loading ? '...' : `${data?.kpis?.bounceRate || 0}%`}
             </span>
           </div>
         </div>
@@ -261,7 +294,7 @@ export default function Dashboard() {
           </div>
           <div className="mt-4">
             <span className="text-3xl sm:text-4xl font-900 tracking-tight block">
-              {loading ? '...' : data?.kpis.liveVisitors || 0}
+              {loading ? '...' : data?.kpis?.liveVisitors || 0}
             </span>
             <span className="text-[10px] text-teal-100/70 uppercase tracking-wider font-500 mt-1 block">Active in past 5 min</span>
           </div>
