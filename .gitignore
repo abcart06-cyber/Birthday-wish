@@ -1,0 +1,6 @@
+# Git ignore for root project
+.DS_Store
+analytics/node_modules
+analytics/.next
+analytics/.env
+analytics/.vercel

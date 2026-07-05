@@ -1,0 +1,69 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Session {
+  id               String      @id @default(uuid())
+  visitorId        String      
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  // Geolocation
+  country          String?     
+  city             String?     
+  
+  // Browser/OS specs
+  browser          String?
+  device           String?
+  os               String?
+  screenResolution String?
+  
+  // Referrer/UTM
+  referrer         String?
+  utmSource        String?
+  utmMedium        String?
+  utmCampaign      String?
+  
+  // Relations
+  pageViews        PageView[]
+  events           UserEvent[]
+
+  @@index([visitorId])
+  @@index([createdAt])
+}
+
+model PageView {
+  id             String   @id @default(uuid())
+  sessionId      String
+  session        Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  path           String
+  title          String?
+  duration       Int?     // Time on page in seconds
+  scrollDepth    Float?   // Percentage 0-100
+  createdAt      DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([path])
+  @@index([createdAt])
+}
+
+model UserEvent {
+  id             String   @id @default(uuid())
+  sessionId      String
+  session        Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  eventType      String   // 'click', etc.
+  elementId      String?
+  elementText    String?
+  path           String
+  createdAt      DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([createdAt])
+}
